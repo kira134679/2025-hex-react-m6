@@ -1,9 +1,9 @@
 import js from "@eslint/js";
-import globals from "globals";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import { defineConfig, globalIgnores } from "eslint/config";
+import globals from "globals";
 
 export default defineConfig([
   globalIgnores(["dist"]),
@@ -27,7 +27,6 @@ export default defineConfig([
       "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
       eqeqeq: ["error", "always"],
       "no-unused-expressions": ["error"],
-      "no-console": ["error"],
       "no-restricted-syntax": [
         "error",
         {

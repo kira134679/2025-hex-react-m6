@@ -15,13 +15,13 @@ function App() {
     e.preventDefault();
 
     try {
-      const res = await authApi.login(formData);
+      const res = await authApi.errorin(formData);
 
       const { token } = res.data;
       localStorage.setItem('hex_token', token);
       setIsAuth(true);
     } catch (error) {
-      alert(error.response.data.message);
+      console.error(error.response.data.message);
       setIsAuth(false);
     }
   };
@@ -37,7 +37,7 @@ function App() {
         await authApi.check();
         setIsAuth(true);
       } catch (error) {
-        alert(error.response.data.message);
+        console.error(error.response.data.message);
       }
     };
     verify();
@@ -53,7 +53,7 @@ function App() {
         const { products } = res.data;
         setProducts(products);
       } catch (error) {
-        alert(error.response.data.message);
+        console.error(error.response.data.message);
       }
     };
 
@@ -133,7 +133,7 @@ function App() {
           </div>
         </div>
       ) : (
-        <div className="container login">
+        <div className="container errorin">
           <div className="row justify-content-center">
             <h1 className="h3 mb-3 font-weight-normal">請先登入</h1>
             <div className="col-8">
