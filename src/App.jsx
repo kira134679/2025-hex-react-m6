@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { authApi, productsApi } from './api';
 
 function App() {
   const [formData, setFormData] = useState({
@@ -10,8 +11,54 @@ function App() {
   const [products, setProducts] = useState([]);
   const [tempProduct, setTempProduct] = useState(null);
 
-  const handleSubmit = () => {};
-  const handleInputChange = () => {};
+  const handleSubmit = async e => {
+    e.preventDefault();
+
+    try {
+      const res = await authApi.login(formData);
+
+      const { token } = res.data;
+      localStorage.setItem('hex_token', token);
+      setIsAuth(true);
+    } catch (error) {
+      alert(error.response.data.message);
+      setIsAuth(false);
+    }
+  };
+
+  const handleInputChange = e => {
+    const { id, value } = e.target;
+    setFormData(prevData => ({ ...prevData, [id]: value }));
+  };
+
+  useEffect(() => {
+    const verify = async () => {
+      try {
+        await authApi.check();
+        setIsAuth(true);
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    };
+    verify();
+  }, []);
+
+  useEffect(() => {
+    if (!isAuth) return;
+
+    const getProducts = async () => {
+      try {
+        const res = await productsApi.getProducts();
+
+        const { products } = res.data;
+        setProducts(products);
+      } catch (error) {
+        alert(error.response.data.message);
+      }
+    };
+
+    getProducts();
+  }, [isAuth]);
 
   return (
     <>
@@ -32,14 +79,14 @@ function App() {
                 </thead>
                 <tbody>
                   {products && products.length > 0 ? (
-                    products.map(item => (
-                      <tr key={item.id}>
-                        <td>{item.title}</td>
-                        <td>{item.origin_price}</td>
-                        <td>{item.price}</td>
-                        <td>{item.is_enabled ? '啟用' : '未啟用'}</td>
+                    products.map(product => (
+                      <tr key={product.id}>
+                        <td>{product.title}</td>
+                        <td>{product.origin_price}</td>
+                        <td>{product.price}</td>
+                        <td>{product.is_enabled ? '啟用' : '未啟用'}</td>
                         <td>
-                          <button className="btn btn-primary" onClick={() => setTempProduct(item)}>
+                          <button className="btn btn-primary" onClick={() => setTempProduct(product)}>
                             查看細節
                           </button>
                         </td>
@@ -57,7 +104,7 @@ function App() {
               <h2>單一產品細節</h2>
               {tempProduct ? (
                 <div className="card mb-3">
-                  <img src={tempProduct.imageUrl} className="card-img-top primary-image" alt="主圖" />
+                  <img src={tempProduct.imageUrl} className="card-img-top primary-image" alt={tempProduct.title} />
                   <div className="card-body">
                     <h5 className="card-title">
                       {tempProduct.title}
@@ -74,7 +121,7 @@ function App() {
                     <h5 className="mt-3">更多圖片：</h5>
                     <div className="d-flex flex-wrap">
                       {tempProduct.imagesUrl?.map((url, index) => (
-                        <img key={index} src={url} className="images" alt="副圖" />
+                        <img key={index} src={url} className="images" alt={tempProduct.title} />
                       ))}
                     </div>
                   </div>
