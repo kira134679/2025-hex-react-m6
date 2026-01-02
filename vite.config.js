@@ -3,6 +3,6 @@ import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: `/${import.meta.env.VITE_REPO_NAME}/`,
+  base: `/2025-hex-react-m2/`,
   plugins: [react()],
 });

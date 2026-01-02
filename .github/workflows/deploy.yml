@@ -36,9 +36,6 @@ jobs:
         run: pnpm install
 
       - name: build
-        env:
-          VITE_REPO_NAME: ${{ vars.VITE_REPO_NAME }}
-          VITE_API_PATH: ${{ secrets.VITE_API_PATH }}
         run: pnpm build
 
       - name: upload pages artifact
