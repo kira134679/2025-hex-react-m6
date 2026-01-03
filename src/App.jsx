@@ -15,7 +15,7 @@ function App() {
     e.preventDefault();
 
     try {
-      const res = await authApi.errorin(formData);
+      const res = await authApi.login(formData);
 
       const { token } = res.data;
       localStorage.setItem('hex_token', token);
@@ -133,7 +133,7 @@ function App() {
           </div>
         </div>
       ) : (
-        <div className="container errorin">
+        <div className="container login">
           <div className="row justify-content-center">
             <h1 className="h3 mb-3 font-weight-normal">請先登入</h1>
             <div className="col-8">
