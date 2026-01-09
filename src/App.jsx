@@ -8,6 +8,7 @@ function App() {
   });
 
   const [isAuth, setIsAuth] = useState(false);
+  const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [products, setProducts] = useState([]);
   const [tempProduct, setTempProduct] = useState(null);
 
@@ -23,6 +24,8 @@ function App() {
     } catch (error) {
       console.error(error.response.data.message);
       setIsAuth(false);
+    } finally {
+      setIsAuthChecked(true);
     }
   };
 
@@ -39,6 +42,8 @@ function App() {
       } catch (error) {
         console.error(error.response.data.message);
         setIsAuth(false);
+      } finally {
+        setIsAuthChecked(true);
       }
     };
     verify();
@@ -59,6 +64,8 @@ function App() {
 
     getProducts();
   }, [isAuth]);
+
+  if (!isAuthChecked) return <>載入中...</>;
 
   return (
     <>
@@ -120,9 +127,9 @@ function App() {
                     </div>
                     <h5 className="mt-3">更多圖片：</h5>
                     <div className="d-flex flex-wrap">
-                      {tempProduct.imagesUrl?.map((url, index) => (
-                        <img key={index} src={url} className="images" alt={tempProduct.title} />
-                      ))}
+                      {tempProduct.imagesUrl?.map((url, index) =>
+                        url ? <img key={index} src={url} className="images" alt={tempProduct.title} /> : null,
+                      )}
                     </div>
                   </div>
                 </div>
@@ -143,6 +150,7 @@ function App() {
                     type="email"
                     className="form-control"
                     id="username"
+                    name="username"
                     placeholder="name@example.com"
                     value={formData.username}
                     onChange={handleInputChange}
@@ -156,6 +164,7 @@ function App() {
                     type="password"
                     className="form-control"
                     id="password"
+                    name="password"
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleInputChange}
