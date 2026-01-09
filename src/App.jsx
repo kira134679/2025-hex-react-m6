@@ -34,10 +34,11 @@ function App() {
   useEffect(() => {
     const verify = async () => {
       try {
-        await authApi.check();
-        setIsAuth(true);
+        const res = await authApi.check();
+        setIsAuth(!!res.data?.success);
       } catch (error) {
         console.error(error.response.data.message);
+        setIsAuth(false);
       }
     };
     verify();
@@ -50,8 +51,7 @@ function App() {
       try {
         const res = await productsApi.getProducts();
 
-        const { products } = res.data;
-        setProducts(products);
+        setProducts(res.data?.products);
       } catch (error) {
         console.error(error.response.data.message);
       }
