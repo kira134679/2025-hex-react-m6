@@ -21,4 +21,9 @@ apiClient.interceptors.request.use(config => {
   return config;
 });
 
+apiClient.interceptors.response.use(
+  res => res.data,
+  err => Promise.reject(err.response?.data?.message || err.message),
+);
+
 export { apiClient };
