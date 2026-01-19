@@ -20,11 +20,11 @@ function App() {
     try {
       const res = await authApi.login(formData);
 
-      const { token, expired } = res.data;
+      const { token, expired } = res;
       document.cookie = `hex_token=${token}; expires=${new Date(expired)}`;
       setIsAuth(true);
     } catch (error) {
-      console.error(error.response.data.message);
+      console.error(error);
       setIsAuth(false);
     } finally {
       setIsAuthChecked(true);
@@ -40,9 +40,9 @@ function App() {
     const verify = async () => {
       try {
         const res = await authApi.check();
-        setIsAuth(!!res.data?.success);
+        setIsAuth(!!res?.success);
       } catch (error) {
-        console.error(error.response.data.message);
+        console.error(error);
         setIsAuth(false);
       } finally {
         setIsAuthChecked(true);
@@ -61,11 +61,11 @@ function App() {
 
     const getProducts = async () => {
       try {
-        const res = await productsApi.getProducts();
+        const result = await productsApi.getProducts();
 
-        setProducts(res.data?.products);
+        setProducts(result?.products);
       } catch (error) {
-        console.error(error.response.data.message);
+        console.error(error);
       }
     };
 
