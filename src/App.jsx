@@ -3,6 +3,19 @@ import { useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { authApi, productsApi } from './api';
 
+const TEMP_PRODUCT_DATA = {
+  title: '',
+  category: '',
+  origin_price: '',
+  price: '',
+  unit: '',
+  description: '',
+  content: '',
+  is_enabled: false,
+  imageUrl: '',
+  imagesUrl: [],
+};
+
 function App() {
   const [formData, setFormData] = useState({
     username: '',
@@ -14,7 +27,7 @@ function App() {
   const productModal = useRef(null);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [products, setProducts] = useState([]);
-  const [tempProduct, setTempProduct] = useState(null);
+  const [tempProduct, setTempProduct] = useState(TEMP_PRODUCT_DATA);
 
   // form start
 
