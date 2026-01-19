@@ -1,5 +1,6 @@
 import * as bootstrap from 'bootstrap';
 import { useEffect, useRef, useState } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { authApi, productsApi } from './api';
 
 function App() {
@@ -76,6 +77,7 @@ function App() {
 
   return (
     <>
+      <Toaster />
       {isAuth ? (
         <div>
           <div className="container">
