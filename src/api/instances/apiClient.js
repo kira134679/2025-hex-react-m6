@@ -8,7 +8,11 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use(config => {
-  const token = localStorage.getItem('hex_token');
+  const token = document.cookie
+    .split(';')
+    .map(s => s.trim())
+    .find(s => s.startsWith('hex_token='))
+    ?.split('=')[1];
 
   if (token) {
     config.headers.Authorization = token;

@@ -18,8 +18,8 @@ function App() {
     try {
       const res = await authApi.login(formData);
 
-      const { token } = res.data;
-      localStorage.setItem('hex_token', token);
+      const { token, expired } = res.data;
+      document.cookie = `hex_token=${token}; expires=${new Date(expired)}`;
       setIsAuth(true);
     } catch (error) {
       console.error(error.response.data.message);
