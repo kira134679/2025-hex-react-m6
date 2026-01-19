@@ -94,26 +94,25 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td></td>
-                  <td></td>
-                  <td className="text-end"></td>
-                  <td className="text-end"></td>
-                  <td>
-                    <span className="text-success">啟用</span>
-                    <span>未啟用</span>
-                  </td>
-                  <td>
-                    <div className="btn-group">
-                      <button type="button" className="btn btn-outline-primary btn-sm">
-                        編輯
-                      </button>
-                      <button type="button" className="btn btn-outline-danger btn-sm">
-                        刪除
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                {products.map(product => (
+                  <tr key={product.id}>
+                    <td>{product.category}</td>
+                    <td>{product.title}</td>
+                    <td className="text-end">{product.origin_price}</td>
+                    <td className="text-end">{product.price}</td>
+                    <td>{product.is_enabled ? <span className="text-success">啟用</span> : <span>未啟用</span>}</td>
+                    <td>
+                      <div className="btn-group">
+                        <button type="button" className="btn btn-outline-primary btn-sm">
+                          編輯
+                        </button>
+                        <button type="button" className="btn btn-outline-danger btn-sm">
+                          刪除
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
