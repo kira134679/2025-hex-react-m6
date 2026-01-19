@@ -1,5 +1,11 @@
 import { apiClient } from './instances/apiClient';
 
+const ADMIN_API_PATH = `/api/${import.meta.env.VITE_API_PATH}/admin`;
+
 export const productsApi = {
-  getProducts: () => apiClient.get(`/api/${import.meta.env.VITE_API_PATH}/admin/products`),
+  getAllProducts: () => apiClient.get(`${ADMIN_API_PATH}/products/all`),
+  getProducts: (params = {}) => apiClient.get(`${ADMIN_API_PATH}/products`, { params }),
+  addProduct: data => apiClient.post(`${ADMIN_API_PATH}/products`, { data }),
+  editProduct: (id, data) => apiClient.put(`${ADMIN_API_PATH}/product/${id}`, { data }),
+  deleteProduct: id => apiClient.put(`${ADMIN_API_PATH}/product/${id}`),
 };
