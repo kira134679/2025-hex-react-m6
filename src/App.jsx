@@ -1,4 +1,4 @@
-import * as bootstrap from 'bootstrap';
+import { Modal } from 'bootstrap';
 import { useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { authApi, productsApi } from './api';
@@ -11,9 +11,12 @@ function App() {
 
   const [isAuth, setIsAuth] = useState(false);
   const productModalRef = useRef(null);
+  const productModal = useRef(null);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
   const [products, setProducts] = useState([]);
   const [tempProduct, setTempProduct] = useState(null);
+
+  // form start
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -37,6 +40,24 @@ function App() {
     setFormData(prevData => ({ ...prevData, [id]: value }));
   };
 
+  // form end
+
+  // model start
+
+  const showModal = () => {
+    productModal.current.show();
+  };
+
+  const hideModal = () => {
+    productModal.current.hide();
+  };
+
+  // modal end
+
+  // product start
+
+  // product end
+
   useEffect(() => {
     const verify = async () => {
       try {
@@ -56,8 +77,13 @@ function App() {
   useEffect(() => {
     if (!isAuth) return;
 
-    productModalRef.current = new bootstrap.Modal('#productModal', {
-      keyboard: false,
+    productModal.current = new Modal(productModalRef.current);
+
+    // Modal 關閉時移除焦點
+    document.querySelector('#productModal').addEventListener('hide.bs.modal', () => {
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
+      }
     });
 
     const getProducts = async () => {
@@ -82,7 +108,9 @@ function App() {
         <div>
           <div className="container">
             <div className="text-end mt-4">
-              <button className="btn btn-primary">建立新的產品</button>
+              <button className="btn btn-primary" onClick={showModal}>
+                建立新的產品
+              </button>
             </div>
             <table className="table mt-4">
               <thead>
@@ -163,6 +191,7 @@ function App() {
       )}
       <div
         id="productModal"
+        ref={productModalRef}
         className="modal fade"
         tabIndex="-1"
         aria-labelledby="productModalLabel"
@@ -264,7 +293,7 @@ function App() {
               </div>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-outline-secondary" data-bs-dismiss="modal">
+              <button type="button" className="btn btn-outline-secondary" data-bs-dismiss="modal" onClick={hideModal}>
                 取消
               </button>
               <button type="button" className="btn btn-primary">
