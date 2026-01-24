@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { authApi, productsApi } from './api';
 import Login from './components/Login';
+import Pagination from './components/Pagination';
 import ProductModal from './components/ProductModal';
 
 const TEMP_PRODUCT_DATA = {
@@ -28,6 +29,8 @@ function App() {
   const productModalRef = useRef(null);
 
   const [mode, setMode] = useState('');
+
+  const [pagination, setPagination] = useState({});
 
   // form start
 
@@ -81,11 +84,12 @@ function App() {
 
   // product start
 
-  const getProducts = async () => {
+  const getProducts = async (params = {}) => {
     try {
-      const result = await productsApi.getProducts();
+      const result = await productsApi.getProducts(params);
 
       setProducts(result?.products);
+      setPagination(result?.pagination);
     } catch (error) {
       toast.error(error);
     }
@@ -215,6 +219,7 @@ function App() {
                 ))}
               </tbody>
             </table>
+            {pagination && <Pagination pagination={pagination} onChangePage={getProducts} />}
           </div>
         </div>
       ) : (
