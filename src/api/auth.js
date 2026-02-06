@@ -1,6 +1,6 @@
-import { apiClient } from './instances/apiClient';
+import { adminClient } from './instances/adminClient';
 
 export const authApi = {
-  login: data => apiClient.post('/admin/signin', data),
-  check: () => apiClient.post('/api/user/check'),
+  login: data => adminClient.post('/admin/signin', data),
+  check: () => adminClient.post('/api/user/check'),
 };

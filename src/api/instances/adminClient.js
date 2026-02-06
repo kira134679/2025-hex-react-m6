@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-const apiClient = axios.create({
+const adminClient = axios.create({
   baseURL: import.meta.env.VITE_BASE_URL,
   headers: {
     Accept: 'application/json',
   },
 });
 
-apiClient.interceptors.request.use(config => {
+adminClient.interceptors.request.use(config => {
   const token = document.cookie
     .split(';')
     .map(s => s.trim())
@@ -21,9 +21,9 @@ apiClient.interceptors.request.use(config => {
   return config;
 });
 
-apiClient.interceptors.response.use(
+adminClient.interceptors.response.use(
   res => res.data,
   err => Promise.reject(err.response?.data?.message || err.message),
 );
 
-export { apiClient };
+export { adminClient };
