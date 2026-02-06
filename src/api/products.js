@@ -1,6 +1,5 @@
+import { ADMIN_API_PATH } from './constants';
 import { adminClient } from './instances/adminClient';
-
-const ADMIN_API_PATH = `/api/${import.meta.env.VITE_API_PATH}/admin`;
 
 export const productsApi = {
   getAllProducts: () => adminClient.get(`${ADMIN_API_PATH}/products/all`),
