@@ -27,7 +27,7 @@ export default function FrontendLayout() {
           </ul>
         </nav>
       </header>
-      <div className="py-1">
+      <div className="py-1 mt-4">
         <Outlet />
       </div>
     </>
