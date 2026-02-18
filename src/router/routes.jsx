@@ -12,7 +12,7 @@ export const routes = [
     children: [
       { index: true, Component: Home },
       { path: 'products', Component: Products },
-      { path: 'product/:productId', Component: ProductDetail },
+      { path: 'products/:productId', Component: ProductDetail },
       { path: 'cart', Component: Cart },
     ],
   },
