@@ -1,4 +1,5 @@
 import App from '../App';
+import FrontendLayout from '../layouts/FrontendLayout';
 import Cart from '../pages/Frontend/Cart';
 import Home from '../pages/Frontend/Home';
 import NotFound from '../pages/Frontend/NotFound';
@@ -10,10 +11,15 @@ export const routes = [
     path: '/',
     Component: App,
     children: [
-      { index: true, Component: Home },
-      { path: 'products', Component: Products },
-      { path: 'products/:productId', Component: ProductDetail },
-      { path: 'cart', Component: Cart },
+      {
+        Component: FrontendLayout,
+        children: [
+          { index: true, Component: Home },
+          { path: 'products', Component: Products },
+          { path: 'products/:productId', Component: ProductDetail },
+          { path: 'cart', Component: Cart },
+        ],
+      },
     ],
   },
   {

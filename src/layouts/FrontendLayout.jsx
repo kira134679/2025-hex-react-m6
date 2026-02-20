@@ -9,7 +9,7 @@ const navItems = [
 export default function FrontendLayout() {
   return (
     <>
-      <header>
+      <header className="sticky-top bg-white">
         <nav className="py-2 shadow">
           <ul className="list-unstyled d-flex justify-content-center gap-3">
             {navItems.map(item => (
