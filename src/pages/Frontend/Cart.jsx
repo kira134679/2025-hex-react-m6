@@ -1,15 +1,31 @@
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router';
 import * as z from 'zod';
+import { guestOrderApi } from '../../api/order';
+import Loading from '../../components/Loading';
+import { deleteCartItem, getCart, selectCartList, selectTotal } from '../../slice/cartSlice';
+import { createOrder } from '../../slice/orderSlice';
+
+const checkoutSchema = z.object({
+  name: z.string().min(1, { error: '姓名為必填' }),
+  email: z.email({ error: 'Email 格式錯誤' }),
+  tel: z.string().refine(tel => /^09\d{8}$/.test(tel), { error: '手機號碼格式錯誤' }),
+  address: z.string().min(1, { error: '地址為必填' }),
+  message: z.string(),
+});
 
 export default function Cart() {
-  const checkoutSchema = z.object({
-    name: z.string().min(1, { error: '姓名為必填' }),
-    email: z.email({ error: 'Email 格式錯誤' }),
-    tel: z.string().refine(tel => /^09\d{8}$/.test(tel), { error: '手機號碼格式錯誤' }),
-    address: z.string().min(1, { error: '地址為必填' }),
-    message: z.string(),
-  });
+  const cartList = useSelector(selectCartList);
+  const totalPrice = useSelector(selectTotal);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
@@ -17,55 +33,111 @@ export default function Cart() {
   } = useForm({ resolver: zodResolver(checkoutSchema) });
 
   const onCheckout = async data => {
-    const payload = {
-      user: {
-        name: data.name,
-        email: data.email,
-        tel: data.tel,
-        address: data.address,
-      },
-      message: data.message,
-    };
-    console.log('checkout', payload);
+    try {
+      setIsLoading(true);
+      const { name, email, tel, address, message } = data;
+      const payload = {
+        user: {
+          name,
+          email,
+          tel,
+          address,
+        },
+        message,
+      };
+
+      const res = await dispatch(createOrder(payload)).unwrap();
+      setIsLoading(false);
+      navigate('/');
+
+      toast.success(res.message);
+    } catch (error) {
+      setIsLoading(false);
+      toast.error(error);
+    }
   };
+
+  const handleDeleteCartItem = async itemId => {
+    try {
+      setIsLoading(true);
+      const res = await dispatch(deleteCartItem(itemId)).unwrap();
+      toast.success(res.message);
+    } catch (error) {
+      toast.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const isProductsInCart = cartList.length > 0;
+
+  useEffect(() => {
+    dispatch(getCart());
+  }, [dispatch]);
+
+  if (!isProductsInCart)
+    return (
+      <div className="container">
+        <div className="py-5 d-flex justify-content-center">
+          <div className="d-flex flex-column justify-content-center">
+            <p className="fs-5 fw-bold mb-3">購物車內無商品。</p>
+            <Link to={'/products'} className="btn btn-primary">
+              前往選購
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <>
+      <Loading isLoading={isLoading} />
       <div className="container">
-        <h2>購物車</h2>
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">品項</th>
-              <th scope="col">數量</th>
-              <th scope="col"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-            </tr>
-            <tr>
-              <th scope="row">2</th>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <th scope="row">3</th>
-              <td>John</td>
-              <td>Doe</td>
-              <td>@social</td>
-            </tr>
-          </tbody>
-        </table>
+        <div className="py-5">
+          <h2>購物車</h2>
+          <table className="table table-striped">
+            <thead>
+              <tr>
+                <th scope="col">品項</th>
+                <th scope="col">數量</th>
+                <th scope="col">小計</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {cartList.map(item => (
+                <tr key={item.product.id}>
+                  <td>{item.product.title}</td>
+                  <td>{item.qty}</td>
+                  <td>{`NT$${item.final_total}`}</td>
+                  <td className="text-end">
+                    <button
+                      type="button"
+                      className="btn btn-outline-danger"
+                      onClick={() => handleDeleteCartItem(item.id)}
+                    >
+                      移除
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colSpan="2" className="text-end">
+                  總計
+                </th>
+                <td>
+                  <p className="fs-5 fw-bold">{`NT$${totalPrice}`}</p>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
       </div>
 
       <div className="container">
+        <h3 className="mb-3">付款資料</h3>
         <form onSubmit={handleSubmit(onCheckout)}>
           <div className="d-flex flex-column row-gap-3">
             <div>
@@ -133,7 +205,7 @@ export default function Cart() {
           </div>
 
           <button type="submit" className="btn btn-primary mt-3">
-            Submit
+            送出訂單
           </button>
         </form>
       </div>
