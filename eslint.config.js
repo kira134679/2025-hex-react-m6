@@ -27,6 +27,7 @@ export default defineConfig([
       "no-unused-vars": ["error", { varsIgnorePattern: "^[A-Z_]" }],
       eqeqeq: ["error", "always"],
       "no-unused-expressions": ["error"],
+      "no-console": ["error"],
       "no-restricted-syntax": [
         "error",
         {
