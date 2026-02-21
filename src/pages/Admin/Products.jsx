@@ -1,7 +1,7 @@
 import { adminProductsApi } from '@/api';
 import { Modal } from 'bootstrap';
 import { useEffect, useRef, useState } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate } from 'react-router';
 import Loading from '../../components/Loading';

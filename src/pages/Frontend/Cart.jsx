@@ -5,7 +5,6 @@ import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router';
 import * as z from 'zod';
-import { guestOrderApi } from '../../api/order';
 import Loading from '../../components/Loading';
 import { deleteCartItem, getCart, selectCartList, selectTotal } from '../../slice/cartSlice';
 import { createOrder } from '../../slice/orderSlice';
