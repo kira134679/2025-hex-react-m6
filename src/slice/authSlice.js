@@ -12,10 +12,8 @@ export const login = createAsyncThunk('auth/login', async (submitData, { rejectW
 export const verifyAuth = createAsyncThunk('auth/verifyAuth', async (_, { rejectWithValue }) => {
   try {
     const res = await authApi.check();
-    console.log('thunk', res);
     return res;
   } catch (error) {
-    console.error(error);
     return rejectWithValue(error);
   }
 });
