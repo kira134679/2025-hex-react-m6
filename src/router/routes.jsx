@@ -1,4 +1,4 @@
-import AdminProducts from '@/pages/admin/Products';
+import AdminProducts from '../pages/Admin/Products';
 import App from '../App';
 import AdminLayout from '../layouts/AdminLayout';
 import FrontendLayout from '../layouts/FrontendLayout';
