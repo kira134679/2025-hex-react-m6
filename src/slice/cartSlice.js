@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { guestCartApi } from '../api/cart';
+import { createOrder } from './orderSlice';
 
 export const getCart = createAsyncThunk('cart/getCart', async (_, { rejectWithValue }) => {
   try {
@@ -10,25 +11,31 @@ export const getCart = createAsyncThunk('cart/getCart', async (_, { rejectWithVa
   }
 });
 
-export const addToCart = createAsyncThunk('cart/addToCart', async (data, { rejectWithValue }) => {
+export const addToCart = createAsyncThunk('cart/addToCart', async (data, { rejectWithValue, dispatch }) => {
   try {
-    return await guestCartApi.addToCart({ data });
+    const res = await guestCartApi.addToCart({ data });
+    dispatch(getCart());
+    return res;
   } catch (error) {
     return rejectWithValue(error);
   }
 });
 
-export const deleteCartItem = createAsyncThunk('cart/deleteCartItem', async (id, { rejectWithValue }) => {
+export const deleteCartItem = createAsyncThunk('cart/deleteCartItem', async (id, { rejectWithValue, dispatch }) => {
   try {
-    return await guestCartApi.deleteCartItem(id);
+    const res = await guestCartApi.deleteCartItem(id);
+    dispatch(getCart());
+    return res;
   } catch (error) {
     return rejectWithValue(error);
   }
 });
 
-export const deleteCarts = createAsyncThunk('cart/deleteCarts', async (_, { rejectWithValue }) => {
+export const deleteCarts = createAsyncThunk('cart/deleteCarts', async (_, { rejectWithValue, dispatch }) => {
   try {
-    return await guestCartApi.deleteCart();
+    const res = await guestCartApi.deleteCart();
+    dispatch(getCart());
+    return res;
   } catch (error) {
     return rejectWithValue(error);
   }
@@ -46,7 +53,7 @@ const cartSlice = createSlice({
       state.cartList = payload.carts;
       state.total = payload.final_total;
     });
-    builder.addCase(getCart.rejected, state => {
+    builder.addCase(createOrder.fulfilled, state => {
       state.cartList = [];
       state.total = 0;
     });
