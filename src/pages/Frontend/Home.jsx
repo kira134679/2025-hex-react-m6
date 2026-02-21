@@ -1,3 +1,7 @@
 export default function Home() {
-  return <h1>首頁</h1>;
+  return (
+    <div className="container py-5">
+      <h1>首頁</h1>
+    </div>
+  );
 }
