@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: `/2025-hex-react-m2/`,
+  base: `/2025-hex-react-m6/`,
   plugins: [react()],
   resolve: {
     alias: {
