@@ -1,10 +1,13 @@
+import { adminProductsApi } from '@/api';
 import { Modal } from 'bootstrap';
 import { useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { authApi, productsApi } from '../../api';
-import Login from '../../components/Login';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigate } from 'react-router';
+import Loading from '../../components/Loading';
 import Pagination from '../../components/Pagination';
 import ProductModal from '../../components/ProductModal';
+import { selectIsAuth, selectIsAuthChecked, verifyAuth } from '../../slice/authSlice';
 
 const TEMP_PRODUCT_DATA = {
   title: '',
@@ -20,8 +23,8 @@ const TEMP_PRODUCT_DATA = {
 };
 
 export default function Products() {
-  const [isAuth, setIsAuth] = useState(false);
-  const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const isAuth = useSelector(selectIsAuth);
+  const isAuthChecked = useSelector(selectIsAuthChecked);
 
   const [products, setProducts] = useState([]);
   const [tempProduct, setTempProduct] = useState(TEMP_PRODUCT_DATA);
@@ -86,7 +89,7 @@ export default function Products() {
 
   const getProducts = async (params = {}) => {
     try {
-      const result = await productsApi.getProducts(params);
+      const result = await adminProductsApi.getProducts(params);
 
       setProducts(result?.products);
       setPagination(result?.pagination);
@@ -107,9 +110,9 @@ export default function Products() {
 
     try {
       if (mode === 'edit') {
-        res = await productsApi.updateProduct(id, payload);
+        res = await adminProductsApi.updateProduct(id, payload);
       } else if (mode === 'create') {
-        res = await productsApi.createProduct(payload);
+        res = await adminProductsApi.createProduct(payload);
       } else {
         throw new Error('未預期的錯誤!');
       }
@@ -123,7 +126,7 @@ export default function Products() {
 
   const deleteProduct = async id => {
     try {
-      const res = await productsApi.deleteProduct(id);
+      const res = await adminProductsApi.deleteProduct(id);
       getProducts();
       hideModal();
       toast.success(res.message);
@@ -134,21 +137,17 @@ export default function Products() {
 
   // product end
 
+  const dispatch = useDispatch();
   useEffect(() => {
     const verify = async () => {
       try {
-        const res = await authApi.check();
-        setIsAuth(!!res?.success);
+        return await dispatch(verifyAuth()).unwrap();
       } catch (error) {
-        setIsAuth(false);
         toast.error(error);
-      } finally {
-        setIsAuthChecked(true);
       }
     };
-
     verify();
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (!isAuth) return;
@@ -165,66 +164,63 @@ export default function Products() {
     getProducts();
   }, [isAuth]);
 
-  if (!isAuthChecked) return <>載入中...</>;
+  if (!isAuthChecked) return <Loading isLoading={true} />;
+  if (!isAuth) return <Navigate to="/login" replace />;
 
   return (
     <>
-      <Toaster />
-      {isAuth ? (
-        <div>
-          <div className="container">
-            <div className="text-end mt-4">
-              <button className="btn btn-primary" onClick={() => showModal('create', TEMP_PRODUCT_DATA)}>
-                建立新的產品
-              </button>
-            </div>
-            <table className="table mt-4">
-              <thead>
-                <tr>
-                  <th width="120">分類</th>
-                  <th>產品名稱</th>
-                  <th width="120">原價</th>
-                  <th width="120">售價</th>
-                  <th width="100">是否啟用</th>
-                  <th width="120">編輯</th>
-                </tr>
-              </thead>
-              <tbody>
-                {products.map(product => (
-                  <tr key={product.id}>
-                    <td>{product.category}</td>
-                    <td>{product.title}</td>
-                    <td className="text-end">{product.origin_price}</td>
-                    <td className="text-end">{product.price}</td>
-                    <td>{product.is_enabled ? <span className="text-success">啟用</span> : <span>未啟用</span>}</td>
-                    <td>
-                      <div className="btn-group">
-                        <button
-                          type="button"
-                          className="btn btn-outline-primary btn-sm"
-                          onClick={() => showModal('edit', product)}
-                        >
-                          編輯
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-outline-danger btn-sm"
-                          onClick={() => showModal('delete', product)}
-                        >
-                          刪除
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {pagination && <Pagination pagination={pagination} onChangePage={getProducts} />}
+      <div>
+        <div className="container">
+          <div className="text-end mt-4">
+            <button className="btn btn-primary" onClick={() => showModal('create', TEMP_PRODUCT_DATA)}>
+              建立新的產品
+            </button>
           </div>
+          <table className="table mt-4">
+            <thead>
+              <tr>
+                <th width="120">分類</th>
+                <th>產品名稱</th>
+                <th width="120">原價</th>
+                <th width="120">售價</th>
+                <th width="100">是否啟用</th>
+                <th width="120">編輯</th>
+              </tr>
+            </thead>
+            <tbody>
+              {products.map(product => (
+                <tr key={product.id}>
+                  <td>{product.category}</td>
+                  <td>{product.title}</td>
+                  <td className="text-end">{product.origin_price}</td>
+                  <td className="text-end">{product.price}</td>
+                  <td>{product.is_enabled ? <span className="text-success">啟用</span> : <span>未啟用</span>}</td>
+                  <td>
+                    <div className="btn-group">
+                      <button
+                        type="button"
+                        className="btn btn-outline-primary btn-sm"
+                        onClick={() => showModal('edit', product)}
+                      >
+                        編輯
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger btn-sm"
+                        onClick={() => showModal('delete', product)}
+                      >
+                        刪除
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {pagination && <Pagination pagination={pagination} onChangePage={getProducts} />}
         </div>
-      ) : (
-        <Login setIsAuth={setIsAuth} setIsAuthChecked={setIsAuthChecked} />
-      )}
+      </div>
+
       <ProductModal
         mode={mode}
         tempProduct={tempProduct}

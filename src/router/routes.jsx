@@ -1,3 +1,4 @@
+import AdminProducts from '@/pages/admin/Products';
 import App from '../App';
 import AdminLayout from '../layouts/AdminLayout';
 import FrontendLayout from '../layouts/FrontendLayout';
@@ -26,7 +27,7 @@ export const routes = [
       {
         path: 'admin',
         Component: AdminLayout,
-        children: [{ path: 'products', Component: () => <h2>admin product</h2> }],
+        children: [{ path: 'products', Component: AdminProducts }],
       },
     ],
   },
