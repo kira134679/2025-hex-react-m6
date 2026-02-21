@@ -8,7 +8,7 @@ export default function Loading({ isLoading = false }) {
       width="80"
       color="#4fa94d"
       ariaLabel="oval-loading"
-      wrapperStyle={{ zIndex: 50, inset: 0 }}
+      wrapperStyle={{ zIndex: 2000, inset: 0 }}
       wrapperClass="position-fixed bg-white bg-opacity-50 justify-content-center align-items-center"
     />
   );
